@@ -1,7 +1,7 @@
 const { Thoughts, Users } = require('../models');
 
 const thoughtsController = {
-    getAllThoughts(req, res) {
+    getAllThought(req, res) {
         Thoughts.find({})
         .populate({path: 'reactions', select: '-__v'})
         .select('-__v')
@@ -11,7 +11,7 @@ const thoughtsController = {
             res.sendStatus(400);
         });
     },
-    getThoughtsById({params}, res) {
+    getThoughtById({params}, res) {
         Thoughts.findOne({ _id: params.id })
         .populate({path: 'reactions', select: '-__v'})
         .select('-__v')
@@ -27,7 +27,7 @@ const thoughtsController = {
             res.sendStatus(400);
         });
     },
-    createThoughts({params, body}, res) {
+    createThought({params, body}, res) {
         Thoughts.create(body)
         .then(({ _id }) => {
             return Users.findOneAndupdate({ _id: params.userId}, {$push: {thoughts: _id}}, {new: true});
@@ -41,7 +41,7 @@ const thoughtsController = {
         })
         .catch( err => res.json(err));
     },
-    updateThoughts({params, body}, res) {
+    updateThought({params, body}, res) {
         Thoughts.findOneAndUpdate({ _id: params.id}, body, {new: true, runValidators: true})
         .populate({path: 'reactions', select: '-__v'})
         .select('-__v')
@@ -54,7 +54,7 @@ const thoughtsController = {
         })
         .catch(err => res.json(err));
     },
-    deleteThoughts({params}, res) {
+    deleteThought({params}, res) {
         Thoughts.findOneAndDelete({ _id: params.id })
         .then(dbThoughtData => {
             if(!dbThoughtData) {
@@ -78,7 +78,7 @@ const thoughtsController = {
         })
         .catch(err => res.status(400).json(err));
     },
-    deletereaction({params}, res) {
+    deleteReaction({params}, res) {
         Thoughts.findOneAndUpdate({ _id: params.thoughtId}, {$pull: {reactions: {reactionId: params.reactionId}}}, {new: true})
         .then(dbThoughtData => {
             if(!dbThoughtData) {
